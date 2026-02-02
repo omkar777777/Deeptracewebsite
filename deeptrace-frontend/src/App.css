@@ -1,0 +1,22 @@
+/* ==============================
+   App Layout – SAFE BASELINE
+============================== */
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Space below navbar */
+.routes-container {
+  flex: 1;
+  padding: 40px;
+}
+
+/* Optional: prevent content touching edges on mobile */
+@media (max-width: 768px) {
+  .routes-container {
+    padding: 24px;
+  }
+}

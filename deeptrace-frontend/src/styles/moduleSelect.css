@@ -1,0 +1,12 @@
+.module-container {
+  flex: 1;
+  width: 100%;
+  padding: 40px;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  margin-top: 30px;
+}

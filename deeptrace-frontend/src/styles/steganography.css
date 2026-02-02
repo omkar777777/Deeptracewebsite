@@ -1,0 +1,166 @@
+/* ==============================
+   STEGANOGRAPHY MODULE STYLES
+   (ALIGNED WITH CRYPTO MODULE)
+============================== */
+
+.stego-page {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 40px;
+}
+
+/* ------------------------------
+   Header
+------------------------------ */
+.stego-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.stego-header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+.stego-header p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ------------------------------
+   Controls
+------------------------------ */
+.stego-controls {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.stego-controls label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.stego-controls select {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+/* ------------------------------
+   Workspace (2-column)
+------------------------------ */
+.stego-workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+/* ------------------------------
+   Panels
+------------------------------ */
+.stego-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.stego-panel label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+/* ------------------------------
+   Inputs
+------------------------------ */
+.stego-panel input[type="file"] {
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+}
+
+.stego-panel input[type="password"],
+.stego-panel textarea,
+.stego-panel select {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  font-family: inherit;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+.stego-panel textarea {
+  resize: none;
+  min-height: 120px;
+}
+
+/* ------------------------------
+   Buttons
+------------------------------ */
+.stego-panel button {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  margin-bottom: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.stego-panel button:hover {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.stego-panel button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ------------------------------
+   Output Panel
+------------------------------ */
+.stego-output {
+  flex: 1;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  font-family: monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.stego-output .success {
+  color: var(--text-primary);
+}
+
+.stego-output .error {
+  color: #b91c1c;
+}
+
+/* ------------------------------
+   Responsive
+------------------------------ */
+@media (max-width: 900px) {
+  .stego-workspace {
+    grid-template-columns: 1fr;
+  }
+}

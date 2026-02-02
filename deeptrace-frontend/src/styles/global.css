@@ -1,0 +1,130 @@
+/* ==============================
+   GLOBAL STYLES - DEEPTRACE
+============================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  font-family: var(--font-main);
+  background: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  flex: 1;
+}
+
+.routes-container {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Ensure all route outlet children fill the space */
+.routes-container > * {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: #2563eb;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ==============================
+   NAVBAR – MINIMAL & TIMELESS
+============================== */
+
+.navbar {
+  height: 64px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-main);
+  flex-shrink: 0;
+}
+
+.nav-inner {
+  height: 100%;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Left section */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Brand */
+.nav-brand {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: var(--text-primary);
+}
+
+/* Back button */
+.nav-back-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-back-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+/* Links */
+.nav-links {
+  display: flex;
+  gap: 18px;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  position: relative;
+}
+
+.nav-link.active {
+  color: var(--text-primary);
+  font-weight: 500;
+}
