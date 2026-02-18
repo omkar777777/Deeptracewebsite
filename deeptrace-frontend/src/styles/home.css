@@ -36,6 +36,7 @@
 .home-cta {
   padding: 10px 20px;
   font-size: 0.95rem;
+  font-weight: 600;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-light);
   background: transparent;

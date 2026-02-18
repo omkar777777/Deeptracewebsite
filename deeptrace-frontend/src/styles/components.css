@@ -1,4 +1,8 @@
 .module-card {
+  display: block;
+  /* Ensure link behaves like a block container */
+  text-decoration: none;
+  /* Remove default link underline */
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
