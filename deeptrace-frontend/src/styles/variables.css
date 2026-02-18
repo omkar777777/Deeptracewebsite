@@ -21,3 +21,19 @@
   --radius-sm: 6px;
   --radius-md: 12px;
 }
+
+[data-theme="dark"] {
+  /* Backgrounds */
+  --bg-main: #1a1a1a;
+  --bg-card: #2d2d2d;
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+
+  /* Borders */
+  --border-light: #404040;
+
+  /* Accent */
+  --accent: #d4a373;
+}

@@ -28,6 +28,8 @@ CORS(app)  # Allow requests from frontend (React)
 # Register Blueprints
 # ------------------------------
 app.register_blueprint(stego_bp)
+from watermark.routes import watermark_bp
+app.register_blueprint(watermark_bp)
 
 
 # ======================================================

@@ -1,0 +1,23 @@
+========================================
+STARTING DEBUG SESSION
+========================================
+
+[TEST 1] Testing DCT Algorithm
+--- Testing DCT ---
+Payload Length: 111 chars (888 bits)
+Extracting...
+Original: {"id":"user_9999","ts":1738000000000,"hash":"5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"}
+Extracted: {"id":"user_9999","ts":1738000000000,"hash":"5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"}
+SUCCESS: DCT works!
+
+[TEST 2] Testing DWT Algorithm
+--- Testing DWT ---
+Payload Length: 111 chars (888 bits)
+Extracting...
+Original: {"id":"user_9999","ts":1738000000000,"hash":"5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"}
+Extracted: {"id":"user_9999","ts":1738000000000,"hash":"5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"}
+SUCCESS: DWT works!
+
+========================================
+DEBUG SESSION COMPLETE
+========================================

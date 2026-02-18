@@ -44,7 +44,7 @@ body {
 }
 
 /* Ensure all route outlet children fill the space */
-.routes-container > * {
+.routes-container>* {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -100,8 +100,10 @@ button {
   background: none;
   border: none;
   color: var(--text-secondary);
-  font-size: 1.2rem;
-  padding: 6px;
+  font-size: 1.5rem;
+  /* Increased from 1.2rem */
+  padding: 8px;
+  /* Slightly increased padding */
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
@@ -115,16 +117,61 @@ button {
 /* Links */
 .nav-links {
   display: flex;
-  gap: 18px;
+  align-items: center;
+  gap: 12px;
 }
 
 .nav-link {
   font-size: 0.9rem;
   color: var(--text-secondary);
   position: relative;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 6px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.nav-link:hover {
+  background: rgba(125, 125, 125, 0.08);
+  color: var(--text-primary);
 }
 
 .nav-link.active {
   color: var(--text-primary);
   font-weight: 500;
+}
+
+/* ==============================
+   UTILITY CLASSES
+============================== */
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--accent);
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
