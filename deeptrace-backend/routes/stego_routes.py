@@ -1,74 +1,119 @@
 from flask import Blueprint, request, send_file
 import io
 
-from stego.text.whitespace import embed_whitespace, extract_whitespace
-from stego.text.zerowidth import embed_zerowidth, extract_zerowidth
+from stego.image.lsb import embed_lsb, extract_lsb
+from stego.image.lsb_keyed import embed_lsb_keyed, extract_lsb_keyed
+from stego.image.normalize import normalize_image
 
-from utils.validators import (
-    validate_secret,
-    validate_cover_text,
-    validate_stego_text
-)
+from utils.validators import validate_secret, validate_image_file
 from utils.response import success, error
 
-stego_bp = Blueprint("stego", __name__, url_prefix="/stego")
+# 🔥 IMPORTANT: add /api prefix to match frontend
+stego_bp = Blueprint("stego", __name__, url_prefix="/api/stego")
 
 
-# ================= TEXT (FILE-BASED) =================
+# ======================================================
+# IMAGE STEGANOGRAPHY - EMBED
+# ======================================================
 
-@stego_bp.route("/text/embed", methods=["POST"])
-def embed_text():
+@stego_bp.route("/image/embed", methods=["POST"])
+def embed_image():
     try:
-        # ✅ FORCE JSON (no is_json gate)
-        data = request.get_json(force=True)
+        # -------- Validate file --------
+        if "file" not in request.files:
+            return error("Cover image required", 400)
 
-        cover_text = data.get("cover_text")
-        secret = data.get("secret")
-        algorithm = data.get("algorithm", "").lower()
+        file = request.files["file"]
+        validate_image_file(file)
 
-        validate_cover_text(cover_text)
+        # -------- Validate form data --------
+        secret = request.form.get("secret")
+        algorithm = request.form.get("algorithm", "lsb").lower()
+        password = request.form.get("password", "")
+
         validate_secret(secret)
 
-        if algorithm == "whitespace":
-            stego_text = embed_whitespace(cover_text, secret)
-        elif algorithm == "zerowidth":
-            stego_text = embed_zerowidth(cover_text, secret)
+        # -------- Normalize image --------
+        image = normalize_image(file)
+
+        # -------- Algorithm selection --------
+        if algorithm == "lsb":
+            stego_image = embed_lsb(image, secret)
+
+        elif algorithm == "lsb-keyed":
+            if not password:
+                return error("Password required for AES-keyed LSB", 400)
+
+            stego_image = embed_lsb_keyed(image, secret, password)
+
         else:
             return error("Invalid algorithm", 400)
 
-        buffer = io.BytesIO(stego_text.encode("utf-8"))
+        # -------- Return PNG output --------
+        buffer = io.BytesIO()
+        stego_image.save(buffer, format="PNG")
         buffer.seek(0)
 
         return send_file(
             buffer,
-            mimetype="text/plain; charset=utf-8",
+            mimetype="image/png",
             as_attachment=True,
-            download_name="stego.txt"
+            download_name="deeptrace_stego.png"
         )
 
+    except ValueError as ve:
+        return error(str(ve), 400)
+
     except Exception as e:
-        return error(str(e), 400)
+        print("Embed Error:", e)
+        return error("Internal server error", 500)
 
 
-@stego_bp.route("/text/extract", methods=["POST"])
-def extract_text():
+# ======================================================
+# IMAGE STEGANOGRAPHY - EXTRACT
+# ======================================================
+
+@stego_bp.route("/image/extract", methods=["POST"])
+def extract_image():
     try:
+        # -------- Validate file --------
         if "file" not in request.files:
-            return error("Stego text file required", 400)
+            return error("Stego image required", 400)
 
-        algorithm = request.form.get("algorithm", "").lower()
-        stego_text = request.files["file"].read().decode("utf-8")
+        file = request.files["file"]
+        validate_image_file(file)
 
-        validate_stego_text(stego_text)
+        # -------- Get form data --------
+        algorithm = request.form.get("algorithm", "lsb").lower()
+        password = request.form.get("password", "")
 
-        if algorithm == "whitespace":
-            secret = extract_whitespace(stego_text)
-        elif algorithm == "zerowidth":
-            secret = extract_zerowidth(stego_text)
+        # -------- Normalize image --------
+        image = normalize_image(file)
+
+        # -------- Algorithm selection --------
+        if algorithm == "lsb":
+            message = extract_lsb(image)
+
+        elif algorithm == "lsb-keyed":
+            if not password:
+                return error("Password required for AES-keyed extraction", 400)
+
+            message = extract_lsb_keyed(image, password)
+
         else:
             return error("Invalid algorithm", 400)
 
-        return success("Text extracted", {"message": secret})
+        if not message:
+            return error("No hidden message detected", 400)
+
+        return success(
+            "Message extracted successfully",
+            {"message": message}
+        )
+
+    except ValueError as ve:
+        return error(str(ve), 400)
 
     except Exception as e:
-        return error(str(e), 400)
+        print("Extract Error:", e)
+        return error("Internal server error", 500)

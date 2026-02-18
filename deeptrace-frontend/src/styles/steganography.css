@@ -1,166 +1,159 @@
-/* ==============================
-   STEGANOGRAPHY MODULE STYLES
-   (ALIGNED WITH CRYPTO MODULE)
-============================== */
+/* ================= CONTAINER ================= */
 
-.stego-page {
-  flex: 1;
+.stego-container {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 30px 40px;
+  min-height: 100vh;
+  padding: 80px 12%;
+  box-sizing: border-box;
 }
 
-/* ------------------------------
-   Header
------------------------------- */
+/* ================= HEADER ================= */
+
 .stego-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 24px;
+  text-align: center;
+  margin-bottom: 70px;
 }
 
 .stego-header h1 {
-  font-size: 1.8rem;
-  margin-bottom: 4px;
-}
-
-.stego-header p {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-/* ------------------------------
-   Controls
------------------------------- */
-.stego-controls {
-  display: flex;
-  gap: 20px;
-  align-items: flex-end;
-}
-
-.stego-controls label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  display: block;
-  margin-bottom: 4px;
-}
-
-.stego-controls select {
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-light);
-  background: var(--bg-card);
-  font-size: 0.9rem;
+  font-size: 46px;
+  margin-bottom: 15px;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
-/* ------------------------------
-   Workspace (2-column)
------------------------------- */
-.stego-workspace {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+.stego-header p {
+  font-size: 18px;
+  color: var(--text-secondary);
 }
 
-/* ------------------------------
-   Panels
------------------------------- */
-.stego-panel {
+/* ================= GRID ================= */
+
+.stego-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+@media (max-width: 1000px) {
+  .stego-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================= CARDS ================= */
+
+.stego-card {
+  background: var(--bg-card);          /* Solid mahogany */
+  color: #EFE6D8;                      /* Light text inside card */
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* Softer shadow for light UI */
+  border: 1px solid rgba(43, 27, 23, 0.08);
+}
+
+/* ================= SECTION TITLES ================= */
+
+.stego-card h2 {
+  font-size: 26px;
+  margin-bottom: 35px;
+  font-weight: 600;
+  color: #EFE6D8;   /* Proper contrast on dark card */
+}
+
+/* ================= FORM ================= */
+
+.form-group {
+  margin-bottom: 24px;
   display: flex;
   flex-direction: column;
 }
 
-.stego-panel label {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(239, 230, 216, 0.8); /* Softer light text */
 }
 
-/* ------------------------------
-   Inputs
------------------------------- */
-.stego-panel input[type="file"] {
-  margin-bottom: 20px;
-  font-size: 0.85rem;
-}
+/* ================= INPUTS ================= */
 
-.stego-panel input[type="password"],
-.stego-panel textarea,
-.stego-panel select {
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-light);
-  background: var(--bg-card);
-  font-family: inherit;
-  font-size: 0.95rem;
-  margin-bottom: 20px;
-  color: var(--text-primary);
-}
-
-.stego-panel textarea {
-  resize: none;
-  min-height: 120px;
-}
-
-/* ------------------------------
-   Buttons
------------------------------- */
-.stego-panel button {
-  align-self: flex-start;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-light);
-  background: transparent;
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  margin-bottom: 14px;
-  cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.stego-panel button:hover {
-  border-color: var(--accent);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.stego-panel button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ------------------------------
-   Output Panel
------------------------------- */
-.stego-output {
-  flex: 1;
+.form-group input,
+.form-group select,
+.form-group textarea {
   padding: 14px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-light);
-  background: var(--bg-card);
-  font-family: monospace;
-  font-size: 0.9rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-  line-height: 1.4;
-}
-
-.stego-output .success {
+  border-radius: 12px;
+  border: 1px solid rgba(43, 27, 23, 0.2);
+  font-size: 15px;
+  width: 100%;
+  background: #FFFFFF;                 /* Light input for readability */
   color: var(--text-primary);
+  transition: all 0.2s ease;
 }
 
-.stego-output .error {
-  color: #b91c1c;
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 8px rgba(201,162,77,0.25);
 }
 
-/* ------------------------------
-   Responsive
------------------------------- */
-@media (max-width: 900px) {
-  .stego-workspace {
-    grid-template-columns: 1fr;
-  }
+textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+/* ================= BUTTONS ================= */
+
+.primary-btn {
+  background: var(--accent-primary);
+  color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(201,162,77,0.25);
+}
+
+.primary-btn:hover {
+  box-shadow: 0 6px 16px rgba(201,162,77,0.35);
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 1px solid rgba(239, 230, 216, 0.4);
+  color: #EFE6D8;
+}
+
+.secondary-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* ================= IMAGE PREVIEW ================= */
+
+.image-preview img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 1px solid rgba(43, 27, 23, 0.15);
+}
+
+/* ================= STATUS ================= */
+
+.status-box {
+  margin-top: 60px;
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Softer executive success */
+.status-box.success {
+  background: rgba(34, 139, 94, 0.12);
+  color: #2F855A;
+}
+
+/* Softer executive error */
+.status-box.error {
+  background: rgba(180, 83, 75, 0.12);
+  color: #B4534B;
 }

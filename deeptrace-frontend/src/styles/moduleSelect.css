@@ -1,12 +1,102 @@
+/* =====================================
+   MODULE SELECT – Vintage Mocha Luxe (Light Base)
+===================================== */
+
 .module-container {
   flex: 1;
   width: 100%;
-  padding: 40px;
+  padding: 70px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+
+/* Optional Title (if you have one) */
+.module-container h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.module-container p {
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  font-size: 0.95rem;
+}
+
+/* ================= GRID ================= */
 
 .module-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 28px;
-  margin-top: 30px;
+  gap: 32px;
+  margin-top: 20px;
+}
+
+/* ================= MODULE CARD ================= */
+
+.module-card {
+  background: var(--bg-card);          /* Solid mahogany */
+  color: #EFE6D8;                      /* Light text inside */
+  border-radius: 20px;
+  padding: 34px;
+  border: 1px solid rgba(43, 27, 23, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);  /* Softer shadow */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Hover Effect – Executive Lift */
+.module-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-primary);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* ================= CARD CONTENT ================= */
+
+.module-card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 14px;
+  color: #EFE6D8;   /* Proper contrast on dark card */
+  letter-spacing: 0.4px;
+}
+
+.module-card p {
+  font-size: 0.9rem;
+  color: rgba(239, 230, 216, 0.8);  /* Softer light text */
+  line-height: 1.6;
+}
+
+/* Optional Icon Area */
+.module-icon {
+  font-size: 2rem;
+  margin-bottom: 18px;
+  color: var(--accent-primary);
+}
+
+/* ================= GOLD DIVIDER (OPTIONAL) ================= */
+
+.module-divider {
+  width: 40px;
+  height: 3px;
+  background: var(--accent-primary);
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .module-container {
+    padding: 50px 30px;
+  }
+
+  .module-card {
+    padding: 28px;
+  }
 }

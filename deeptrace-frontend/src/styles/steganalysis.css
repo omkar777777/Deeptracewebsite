@@ -1,0 +1,190 @@
+/* ===============================
+   STEGANALYSIS MODULE STYLING
+   DeepTrace – Vintage Mocha Luxe
+================================= */
+
+/* Main Container */
+.steganalysis-container {
+  padding: 40px;
+  min-height: 100vh;
+  background-color: #2B1B17; /* Dark Chocolate */
+  color: #EFE6D8; /* Parchment */
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Page Title */
+.steganalysis-container h1 {
+  margin-bottom: 30px;
+  font-size: 32px;
+  font-weight: 600;
+  color: #C9A24D; /* Antique Gold */
+}
+
+/* ===============================
+   Upload Section
+================================= */
+
+.upload-box {
+  margin-top: 20px;
+  padding: 25px;
+  border: 2px dashed #C9A24D;
+  border-radius: 12px;
+  text-align: center;
+  background-color: #5A2E1F; /* Mahogany */
+  transition: all 0.3s ease;
+}
+
+.upload-box:hover {
+  background-color: #6a3a28;
+  transform: scale(1.01);
+}
+
+.upload-box input[type="file"] {
+  margin-top: 10px;
+  color: #EFE6D8;
+}
+
+.upload-box p {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #EFE6D8;
+}
+
+.upload-selected {
+  margin-top: 15px;
+  color: #C9A24D;
+  font-weight: 500;
+}
+
+.upload-error {
+  margin-top: 10px;
+  color: #ff4d4d;
+  font-size: 14px;
+}
+
+/* ===============================
+   Analyze Button
+================================= */
+
+.analyze-btn {
+  margin-top: 25px;
+  padding: 12px 25px;
+  background-color: #C9A24D;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  color: #2B1B17;
+  transition: all 0.3s ease;
+}
+
+.analyze-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+.analyze-btn:disabled {
+  background-color: #7D6F63; /* Smoke Grey */
+  cursor: not-allowed;
+}
+
+/* ===============================
+   Risk Meter Section
+================================= */
+
+.risk-container {
+  margin-top: 40px;
+  padding: 25px;
+  background-color: #5A2E1F;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.risk-container h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+/* Progress Bar */
+.progress-bar-bg {
+  height: 22px;
+  width: 100%;
+  background-color: #2B1B17;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  transition: width 0.6s ease-in-out;
+  border-radius: 12px;
+}
+
+/* Risk Label */
+.risk-label {
+  margin-top: 18px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ===============================
+   Score Breakdown Section
+================================= */
+
+.score-container {
+  margin-top: 40px;
+  padding: 25px;
+  background-color: #5A2E1F;
+  border-radius: 12px;
+}
+
+.score-container h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.score-card {
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: #2B1B17;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.score-card:hover {
+  transform: scale(1.02);
+  background-color: #3b241d;
+}
+
+.score-label {
+  font-weight: 500;
+}
+
+.score-value {
+  color: #C9A24D;
+  font-weight: 600;
+}
+
+/* ===============================
+   Responsive Design
+================================= */
+
+@media (max-width: 768px) {
+  .steganalysis-container {
+    padding: 20px;
+  }
+
+  .analyze-btn {
+    width: 100%;
+  }
+
+  .score-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

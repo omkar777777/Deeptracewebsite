@@ -1,18 +1,25 @@
+/* =====================================
+   GENERIC PAGE LAYOUT – Light Luxury
+===================================== */
+
 .page {
   flex: 1;
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 40px;
-  /* NO background here */
+  background: transparent;   /* Keep clean parchment base */
 }
 
+/* Page Title */
 .page-title {
   font-size: 2rem;
   margin-bottom: 8px;
+  color: var(--text-primary);  /* Dark chocolate */
 }
 
+/* Page Subtitle */
 .page-subtitle {
-  color: var(--text-secondary);
+  color: var(--text-secondary);  /* Smoke grey */
   margin-bottom: 30px;
 }

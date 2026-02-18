@@ -1,55 +1,71 @@
+import os
+
+
+# ======================================================
+# ALLOWED IMAGE EXTENSIONS
+# ======================================================
+
 ALLOWED_IMAGE_EXTENSIONS = {
-    "png", "jpg", "jpeg", "bmp", "tiff", "webp", "gif", "heic", "heif"
+    "png", "jpg", "jpeg", "bmp",
+    "tiff", "webp", "gif",
+    "heic", "heif"
 }
 
 
-def is_allowed_image(filename):
+# ======================================================
+# IMAGE VALIDATION
+# ======================================================
+
+def is_allowed_image(filename: str) -> bool:
     """
-    Validate allowed image extensions
+    Validate allowed image extensions.
+    Case-insensitive.
     """
-    return (
-        "." in filename and
-        filename.rsplit(".", 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
-    )
+
+    if not filename or "." not in filename:
+        return False
+
+    extension = filename.rsplit(".", 1)[1].lower()
+
+    return extension in ALLOWED_IMAGE_EXTENSIONS
 
 
-def validate_secret(secret):
+def validate_image_file(file):
     """
-    Validate secret message
-    - Can be stripped safely
+    Optional stronger validation for uploaded image file.
     """
-    if secret is None or not str(secret).strip():
+
+    if file is None:
+        raise ValueError("Image file is required")
+
+    if not file.filename:
+        raise ValueError("Invalid file name")
+
+    if not is_allowed_image(file.filename):
+        raise ValueError("Unsupported image format")
+
+
+# ======================================================
+# SECRET MESSAGE VALIDATION
+# ======================================================
+
+def validate_secret(secret: str):
+    """
+    Validate secret message.
+    - Must not be empty
+    - Must be string
+    - Limit max length (basic safety)
+    """
+
+    if secret is None:
+        raise ValueError("Secret message is required")
+
+    if not isinstance(secret, str):
+        raise ValueError("Secret message must be a string")
+
+    if not secret.strip():
         raise ValueError("Secret message cannot be empty")
 
-
-def validate_cover_text(text):
-    """
-    Validate cover / stego text
-    IMPORTANT:
-    - DO NOT strip
-    - DO NOT normalize
-    - Preserve whitespace & zero-width chars
-    """
-    if text is None:
-        raise ValueError("Cover text is required")
-
-    if not isinstance(text, str):
-        raise ValueError("Cover text must be a string")
-
-    if len(text) < 2:
-        raise ValueError("Cover text is too short for steganography")
-
-
-def validate_stego_text(text):
-    """
-    Validate stego text before extraction
-    Same rules as cover text
-    """
-    if text is None:
-        raise ValueError("Stego text is required")
-
-    if not isinstance(text, str):
-        raise ValueError("Stego text must be a string")
-
-    if len(text) < 2:
-        raise ValueError("Stego text is too short or invalid")
+    # Optional: protect against extreme payload sizes
+    if len(secret.encode("utf-8")) > 1_000_000:
+        raise ValueError("Secret message too large")

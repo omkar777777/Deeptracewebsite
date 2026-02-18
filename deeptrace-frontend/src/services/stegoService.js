@@ -1,27 +1,40 @@
 import api from "./api";
 
-/* ================= TEXT STEGANOGRAPHY ================= */
+/* ================= IMAGE STEGANOGRAPHY ================= */
 
-// EMBED → must use ARRAYBUFFER (not blob)
-export const embedTextStego = (coverText, secret, algorithm) => {
-  return api.post(
-    "/stego/text/embed",
-    {
-      cover_text: coverText,
-      secret,
-      algorithm
-    },
-    {
-      responseType: "arraybuffer"   // 🔥 CRITICAL FIX
-    }
-  );
-};
-
-// EXTRACT → multipart form (already correct)
-export const extractTextStego = (file, algorithm) => {
+export const embedImageStego = (
+  imageFile,
+  secret,
+  algorithm = "lsb",
+  password = ""
+) => {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("file", imageFile);
+  formData.append("secret", secret);
   formData.append("algorithm", algorithm);
 
-  return api.post("/stego/text/extract", formData);
+  if (algorithm === "lsb-keyed") {
+    formData.append("password", password);
+  }
+
+  return api.post("/stego/image/embed", formData, {
+    responseType: "arraybuffer"
+  });
+};
+
+
+export const extractImageStego = (
+  imageFile,
+  algorithm = "lsb",
+  password = ""
+) => {
+  const formData = new FormData();
+  formData.append("file", imageFile);
+  formData.append("algorithm", algorithm);
+
+  if (algorithm === "lsb-keyed") {
+    formData.append("password", password);
+  }
+
+  return api.post("/stego/image/extract", formData);
 };

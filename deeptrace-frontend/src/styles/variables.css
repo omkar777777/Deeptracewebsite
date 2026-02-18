@@ -1,23 +1,30 @@
 :root {
-  /* Backgrounds */
-  --bg-main: #efe6dc;
-  --bg-card: #fcfaf8;
+  /* ================= Backgrounds ================= */
 
-  /* Text */
-  --text-primary: #2b2118;
-  --text-secondary: #6b5e54;
+  --bg-main: #EFE6D8;      /* Parchment */
+  --bg-card: #5A2E1F;      /* Mahogany (for dark cards) */
 
-  /* Borders */
-  --border-light: #e6ded6;
+  /* ================= Text ================= */
 
-  /* Accent */
-  --accent: #8b5a2b;
+  --text-primary: #2B1B17;     /* Dark Chocolate */
+  --text-secondary: #7D6F63;   /* Smoke Grey */
 
-  /* Typography */
+  /* ================= Borders ================= */
+
+  --border-light: rgba(43, 27, 23, 0.15);
+
+  /* ================= Accent ================= */
+
+  --accent-primary: #C9A24D;   /* Antique Gold */
+  --accent: #C9A24D;           /* Alias for compatibility */
+
+  /* ================= Typography ================= */
+
   --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, sans-serif;
 
-  /* Radius */
+  /* ================= Radius ================= */
+
   --radius-sm: 6px;
   --radius-md: 12px;
 }

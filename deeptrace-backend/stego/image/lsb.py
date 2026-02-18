@@ -1,14 +1,22 @@
 from .utils import text_to_bits, bits_to_text, set_lsb, get_lsb
 from .capacity import image_capacity
 
-END_MARKER = "1111111111111110"  # end delimiter
+END_MARKER = "1111111111111110"  # 16-bit delimiter
 
 
 def embed_lsb(image, secret):
+    """
+    Embed secret string inside image using 1-bit LSB.
+    Returns modified image.
+    """
+
+    if image.mode != "RGB":
+        raise ValueError("Image must be RGB")
+
     secret_bits = text_to_bits(secret) + END_MARKER
     capacity = image_capacity(image)
 
-    if len(secret_bits) // 8 > capacity:
+    if len(secret_bits) > capacity * 8:
         raise ValueError("Secret message too large for this image")
 
     pixels = image.load()
@@ -16,15 +24,23 @@ def embed_lsb(image, secret):
 
     for y in range(image.height):
         for x in range(image.width):
+
             if bit_index >= len(secret_bits):
                 return image
 
             r, g, b = pixels[x, y]
-            r = set_lsb(r, secret_bits[bit_index]); bit_index += 1
+
             if bit_index < len(secret_bits):
-                g = set_lsb(g, secret_bits[bit_index]); bit_index += 1
+                r = set_lsb(r, secret_bits[bit_index])
+                bit_index += 1
+
             if bit_index < len(secret_bits):
-                b = set_lsb(b, secret_bits[bit_index]); bit_index += 1
+                g = set_lsb(g, secret_bits[bit_index])
+                bit_index += 1
+
+            if bit_index < len(secret_bits):
+                b = set_lsb(b, secret_bits[bit_index])
+                bit_index += 1
 
             pixels[x, y] = (r, g, b)
 
@@ -32,12 +48,20 @@ def embed_lsb(image, secret):
 
 
 def extract_lsb(image):
+    """
+    Extract hidden message from image.
+    """
+
+    if image.mode != "RGB":
+        raise ValueError("Image must be RGB")
+
     pixels = image.load()
     bits = ""
 
     for y in range(image.height):
         for x in range(image.width):
             r, g, b = pixels[x, y]
+
             bits += str(get_lsb(r))
             bits += str(get_lsb(g))
             bits += str(get_lsb(b))

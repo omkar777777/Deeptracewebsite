@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
+import tempfile
 
-# ------------------------------
+# ======================================================
 # Cryptography imports
-# ------------------------------
+# ======================================================
 from crypto.caesar import encrypt_caesar, decrypt_caesar
 from crypto.aes import encrypt_aes, decrypt_aes
 from crypto.des import encrypt_des, decrypt_des
@@ -13,20 +15,25 @@ from crypto.rc4 import encrypt_rc4, decrypt_rc4
 from crypto.chacha20 import encrypt_chacha20, decrypt_chacha20
 from crypto.rsa import generate_rsa_keys, encrypt_rsa, decrypt_rsa
 
-# ------------------------------
+# ======================================================
 # Steganography routes
-# ------------------------------
+# ======================================================
 from routes.stego_routes import stego_bp
 
-# ------------------------------
-# App initialization
-# ------------------------------
-app = Flask(__name__)
-CORS(app)  # Allow requests from frontend (React)
+# ======================================================
+# Steganalysis imports
+# ======================================================
+from steganalysis.image_pipeline import analyze_image
+from steganalysis.file_pipeline import analyze_file
 
-# ------------------------------
+
+# ======================================================
+# App initialization
+# ======================================================
+app = Flask(__name__)
+CORS(app)
+
 # Register Blueprints
-# ------------------------------
 app.register_blueprint(stego_bp)
 
 
@@ -35,17 +42,6 @@ app.register_blueprint(stego_bp)
 # ======================================================
 @app.route("/api/crypto", methods=["POST"])
 def crypto_handler():
-    """
-    Unified Cryptography API endpoint
-
-    Expected JSON:
-    {
-        algorithm: "caesar" | "aes" | "des" | "3des" | "blowfish" | "rc4" | "chacha20" | "rsa"
-        action: "encrypt" | "decrypt" | "generate"
-        text: string
-        key: string | number (if required)
-    }
-    """
 
     data = request.get_json()
 
@@ -61,6 +57,7 @@ def crypto_handler():
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
+
         # =====================
         # Caesar Cipher
         # =====================
@@ -78,7 +75,7 @@ def crypto_handler():
                 return jsonify({"error": "Invalid action"}), 400
 
         # =====================
-        # AES (256-bit, CBC)
+        # AES
         # =====================
         elif algorithm == "aes":
             if not key:
@@ -92,7 +89,7 @@ def crypto_handler():
                 return jsonify({"error": "Invalid action"}), 400
 
         # =====================
-        # DES (56-bit, CBC)
+        # DES
         # =====================
         elif algorithm == "des":
             if not key:
@@ -106,7 +103,7 @@ def crypto_handler():
                 return jsonify({"error": "Invalid action"}), 400
 
         # =====================
-        # 3DES (Triple DES)
+        # 3DES
         # =====================
         elif algorithm == "3des":
             if not key:
@@ -120,7 +117,7 @@ def crypto_handler():
                 return jsonify({"error": "Invalid action"}), 400
 
         # =====================
-        # Blowfish (CBC)
+        # Blowfish
         # =====================
         elif algorithm == "blowfish":
             if not key:
@@ -134,7 +131,7 @@ def crypto_handler():
                 return jsonify({"error": "Invalid action"}), 400
 
         # =====================
-        # RC4 (Stream Cipher)
+        # RC4
         # =====================
         elif algorithm == "rc4":
             if not key:
@@ -148,7 +145,7 @@ def crypto_handler():
                 return jsonify({"error": "Invalid action"}), 400
 
         # =====================
-        # ChaCha20 (Modern Stream Cipher)
+        # ChaCha20
         # =====================
         elif algorithm == "chacha20":
             if not key:
@@ -162,7 +159,7 @@ def crypto_handler():
                 return jsonify({"error": "Invalid action"}), 400
 
         # =====================
-        # RSA (2048-bit)
+        # RSA
         # =====================
         elif algorithm == "rsa":
             if action == "generate":
@@ -170,22 +167,17 @@ def crypto_handler():
 
             elif action == "encrypt":
                 if not key:
-                    return jsonify(
-                        {"error": "Public key is required for RSA encryption"}), 400
+                    return jsonify({"error": "Public key required"}), 400
                 result = encrypt_rsa(text, key)
 
             elif action == "decrypt":
                 if not key:
-                    return jsonify(
-                        {"error": "Private key is required for RSA decryption"}), 400
+                    return jsonify({"error": "Private key required"}), 400
                 result = decrypt_rsa(text, key)
 
             else:
                 return jsonify({"error": "Invalid RSA action"}), 400
 
-        # =====================
-        # Unsupported Algorithm
-        # =====================
         else:
             return jsonify({"error": "Unsupported algorithm"}), 400
 
@@ -197,9 +189,46 @@ def crypto_handler():
 
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
-
     except Exception:
         return jsonify({"error": "Internal server error"}), 500
+
+
+# ======================================================
+# STEGANALYSIS API
+# ======================================================
+@app.route("/api/steganalysis/analyze", methods=["POST"])
+def steganalysis_handler():
+
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        return jsonify({"error": "Empty filename"}), 400
+
+    # Save temporarily
+    temp_dir = tempfile.gettempdir()
+    file_path = os.path.join(temp_dir, file.filename)
+    file.save(file_path)
+
+    try:
+        extension = file.filename.split(".")[-1].lower()
+        image_extensions = ["jpg", "jpeg", "png", "bmp", "tiff", "webp"]
+
+        if extension in image_extensions:
+            result = analyze_image(file_path)
+        else:
+            result = analyze_file(file_path)
+
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
 
 # ======================================================

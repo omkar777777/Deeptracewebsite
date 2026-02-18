@@ -1,5 +1,5 @@
 /* ==============================
-   HOME PAGE STYLES (SCOPED)
+   HOME PAGE STYLES (Vintage Mocha Luxe - Light Base)
 ============================== */
 
 .home {
@@ -8,7 +8,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 60px 40px;
+  background: var(--bg-main); /* Light parchment */
 }
 
 .home-inner {
@@ -16,33 +17,40 @@
 }
 
 .home-title {
-  font-size: 2.4rem;
-  margin-bottom: 14px;
-  color: var(--text-primary);
+  font-size: 2.6rem;
+  margin-bottom: 18px;
+  color: var(--text-primary); /* Dark chocolate */
+  letter-spacing: 0.5px;
 }
 
 .home-subtitle {
   font-size: 1.05rem;
-  color: var(--text-secondary);
-  margin-bottom: 16px;
+  color: var(--text-secondary); /* Smoke grey */
+  margin-bottom: 18px;
 }
 
 .home-intro {
   font-size: 0.95rem;
-  color: var(--text-secondary);
-  margin-bottom: 26px;
+  color: var(--text-secondary); /* Smoke grey */
+  margin-bottom: 32px;
+  line-height: 1.7;
 }
 
+/* CTA Button */
+
 .home-cta {
-  padding: 10px 20px;
+  padding: 12px 22px;
   font-size: 0.95rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  border: 1px solid var(--accent-primary);
   background: transparent;
-  color: var(--text-primary);
+  color: var(--accent-primary);
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .home-cta:hover {
-  border-color: var(--accent);
+  background: var(--accent-primary);
+  color: var(--bg-main); /* Clean contrast instead of hardcoded brown */
+  box-shadow: 0 4px 12px rgba(201, 162, 77, 0.25);
 }
