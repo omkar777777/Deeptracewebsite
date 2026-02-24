@@ -43,7 +43,7 @@ VITE_API_URL=http://localhost:5000/api
 Then run:
 ```bash
 # Terminal 1: Backend
-cd deeptrace-backend
+cd deeptrace_backend
 python app.py
 
 # Terminal 2: Frontend
@@ -56,16 +56,16 @@ npm run dev
 ✅ **Modified:**
 - `deeptrace-frontend/src/services/api.js` - Use environment variables
 - `deeptrace-frontend/package.json` - Added build script
-- `deeptrace-backend/app.py` - Use PORT from environment
+- `deeptrace_backend/app.py` - Use PORT from environment
 
 ✅ **Created:**
 - `vercel.json` - Vercel configuration
 - `.vercelignore` - Deployment ignore list
 - `api/index.py` - Serverless function entry point
 - `deeptrace-frontend/.env.example` - Frontend env template
-- `deeptrace-backend/.env.example` - Backend env template
+- `deeptrace_backend/.env.example` - Backend env template
 - `deeptrace-frontend/.env.local.example` - Local dev template
-- `deeptrace-backend/runtime.txt` - Python version (3.11)
+- `deeptrace_backend/runtime.txt` - Python version (3.11)
 - `VERCEL_DEPLOYMENT.md` - Detailed deployment guide
 
 ## Next Steps

@@ -25,7 +25,7 @@ Before deploying, test locally:
 # Install dependencies
 cd deeptrace-frontend
 npm install
-cd ../deeptrace-backend
+cd ../deeptrace_backend
 pip install -r requirements.txt
 
 # Run frontend (dev mode)
@@ -33,7 +33,7 @@ cd deeptrace-frontend
 npm run dev
 
 # Run backend (in another terminal)
-cd deeptrace-backend
+cd deeptrace_backend
 python app.py
 ```
 
@@ -85,7 +85,7 @@ Once deployed, update the environment variable:
 │   ├── vite.config.js
 │   └── .env.example
 │
-├── deeptrace-backend/        # Flask backend
+├── deeptrace_backend/        # Flask backend
 │   ├── app.py               # Main Flask app
 │   ├── requirements.txt
 │   ├── .env.example
@@ -122,12 +122,12 @@ Specifies files and directories to exclude from deployment:
 
 ### Environment Variables
 - `deeptrace-frontend/.env.example`: Frontend configuration template
-- `deeptrace-backend/.env.example`: Backend configuration template
+- `deeptrace_backend/.env.example`: Backend configuration template
 
 ## Troubleshooting
 
 ### Issue: "Module not found" error
-- Ensure all dependencies in `deeptrace-backend/requirements.txt` are listed
+- Ensure all dependencies in `deeptrace_backend/requirements.txt` are listed
 - Check that relative imports are correct in the backend
 
 ### Issue: CORS errors

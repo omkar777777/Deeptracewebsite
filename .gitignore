@@ -52,11 +52,11 @@ yarn-error.log
 # Build outputs
 deeptrace-frontend/dist/
 deeptrace-frontend/build/
-deeptrace-backend/outputs/
+deeptrace_backend/outputs/
 
 # Uploads directory (but keep the README)
-deeptrace-backend/uploads/*
-!deeptrace-backend/uploads/README.md
+deeptrace_backend/uploads/*
+!deeptrace_backend/uploads/README.md
 
 # Logs
 logs/

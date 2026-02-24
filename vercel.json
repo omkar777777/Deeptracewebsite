@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "cd deeptrace-frontend && npm install",
+  "installCommand": "cd deeptrace-frontend && npm install && pip install -r ../deeptrace_backend/requirements.txt",
   "buildCommand": "cd deeptrace-frontend && npm run build",
   "outputDirectory": "deeptrace-frontend/dist",
   "routes": [
