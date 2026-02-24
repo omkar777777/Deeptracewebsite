@@ -63,7 +63,12 @@ vercel
 After your first deployment:
 1. Go to your project on [Vercel Dashboard](https://vercel.com/dashboard)
 2. Navigate to **Settings → Environment Variables**
-3. Add the environment variables listed above
+3. Add the environment variable:
+   - **Key**: `VITE_API_URL`
+   - **Value**: `https://your-project.vercel.app/api`
+   - **Environments**: All (Production, Preview, Development)
+4. Click **Save**
+5. Redeploy your project for the changes to take effect
 
 ### 3. Set Production URL
 

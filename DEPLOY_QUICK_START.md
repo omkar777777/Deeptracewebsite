@@ -21,10 +21,11 @@ After the first deployment:
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
 2. Select your project
 3. Go to **Settings → Environment Variables**
-4. Add these variables:
+4. Add this variable:
    - **Key**: `VITE_API_URL`
    - **Value**: `https://your-project.vercel.app/api`
-   - **Environments**: Production, Preview, Development
+   - **Environments**: Select all (Production, Preview, Development)
+5. Click **Save**
 
 ## 5. Trigger Redeploy
 After adding environment variables, redeploy:
