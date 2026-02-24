@@ -2,11 +2,6 @@
   "version": 2,
   "buildCommand": "cd deeptrace-frontend && npm run build",
   "outputDirectory": "deeptrace-frontend/dist",
-  "functions": {
-    "api/index.py": {
-      "runtime": "python3.11"
-    }
-  },
   "routes": [
     {
       "src": "/api/(.*)",
