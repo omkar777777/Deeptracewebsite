@@ -7,7 +7,8 @@ Jinja2==3.1.6
 MarkupSafe==3.0.3
 numpy==2.4.1
 pillow==12.1.0
-pillow_heif==1.1.1
 pycryptodome==3.23.0
 Werkzeug==3.1.4
 opencv-python==4.8.1.78
+# Removed `pillow_heif` to avoid pulling heavy native deps (e.g. cv2)
+# For HEIF support, install pillow_heif in environments that support native wheels.

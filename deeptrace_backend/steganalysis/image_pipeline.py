@@ -1,6 +1,13 @@
-import cv2
 import numpy as np
 import os
+
+# OpenCV (cv2) is an optional, heavy native dependency that often fails
+# to install in serverless environments. Import lazily and provide
+# a clear error when not available so the function can still start.
+try:
+    import cv2
+except Exception:
+    cv2 = None
 
 from .lsb_analysis import lsb_score
 from .entropy_analysis import entropy_score
@@ -22,6 +29,9 @@ def load_and_normalize_image(file_path):
 
     if not os.path.exists(file_path):
         raise ValueError("File not found")
+
+    if cv2 is None:
+        raise RuntimeError("OpenCV (cv2) is not available in this runtime")
 
     image = cv2.imread(file_path, cv2.IMREAD_UNCHANGED)
 

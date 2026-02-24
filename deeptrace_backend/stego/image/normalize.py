@@ -1,9 +1,13 @@
 from PIL import Image
-import pillow_heif
 import io
 
-# Enable HEIC / HEIF support
-pillow_heif.register_heif_opener()
+# Optional HEIF support: pillow_heif may pull in heavy native deps.
+# Import it only if available; otherwise continue without HEIF support.
+try:
+    import pillow_heif
+    pillow_heif.register_heif_opener()
+except Exception:
+    pillow_heif = None
 
 
 def normalize_image(file):
