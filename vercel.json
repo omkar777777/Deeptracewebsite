@@ -1,18 +1,13 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "deeptrace-frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "deeptrace-frontend/dist"
-      }
-    },
-    {
-      "src": "api/index.py",
-      "use": "@vercel/python"
+  "buildCommand": "cd deeptrace-frontend && npm run build",
+  "outputDirectory": "deeptrace-frontend/dist",
+  "installCommand": "npm install --prefix deeptrace-frontend && pip install -r deeptrace-backend/requirements.txt",
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.11"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/api/(.*)",
@@ -20,9 +15,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "deeptrace-frontend/dist/$1"
+      "dest": "/index.html"
     }
-  ],
-  "buildCommand": "cd deeptrace-frontend && npm run build",
-  "outputDirectory": "deeptrace-frontend/dist"
+  ]
 }
