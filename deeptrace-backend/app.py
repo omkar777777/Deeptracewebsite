@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import tempfile
+import uuid
+from werkzeug.utils import secure_filename
 
 # ======================================================
 # Cryptography imports
@@ -26,7 +28,6 @@ from routes.stego_routes import stego_bp
 from steganalysis.image_pipeline import analyze_image
 from steganalysis.file_pipeline import analyze_file
 
-
 # ======================================================
 # App initialization
 # ======================================================
@@ -35,9 +36,9 @@ CORS(app)
 
 # Register Blueprints
 app.register_blueprint(stego_bp)
+
 from watermark.routes import watermark_bp
 app.register_blueprint(watermark_bp)
-
 
 # ======================================================
 # CRYPTOGRAPHY API
@@ -60,123 +61,53 @@ def crypto_handler():
 
     try:
 
-        # =====================
-        # Caesar Cipher
-        # =====================
         if algorithm == "caesar":
             if key is None:
                 return jsonify({"error": "Key is required for Caesar cipher"}), 400
-
             shift = int(key)
+            result = encrypt_caesar(text, shift) if action == "encrypt" else decrypt_caesar(text, shift)
 
-            if action == "encrypt":
-                result = encrypt_caesar(text, shift)
-            elif action == "decrypt":
-                result = decrypt_caesar(text, shift)
-            else:
-                return jsonify({"error": "Invalid action"}), 400
-
-        # =====================
-        # AES
-        # =====================
         elif algorithm == "aes":
             if not key:
                 return jsonify({"error": "Passphrase is required for AES"}), 400
+            result = encrypt_aes(text, key) if action == "encrypt" else decrypt_aes(text, key)
 
-            if action == "encrypt":
-                result = encrypt_aes(text, key)
-            elif action == "decrypt":
-                result = decrypt_aes(text, key)
-            else:
-                return jsonify({"error": "Invalid action"}), 400
-
-        # =====================
-        # DES
-        # =====================
         elif algorithm == "des":
             if not key:
                 return jsonify({"error": "Passphrase is required for DES"}), 400
+            result = encrypt_des(text, key) if action == "encrypt" else decrypt_des(text, key)
 
-            if action == "encrypt":
-                result = encrypt_des(text, key)
-            elif action == "decrypt":
-                result = decrypt_des(text, key)
-            else:
-                return jsonify({"error": "Invalid action"}), 400
-
-        # =====================
-        # 3DES
-        # =====================
         elif algorithm == "3des":
             if not key:
                 return jsonify({"error": "Passphrase is required for 3DES"}), 400
+            result = encrypt_3des(text, key) if action == "encrypt" else decrypt_3des(text, key)
 
-            if action == "encrypt":
-                result = encrypt_3des(text, key)
-            elif action == "decrypt":
-                result = decrypt_3des(text, key)
-            else:
-                return jsonify({"error": "Invalid action"}), 400
-
-        # =====================
-        # Blowfish
-        # =====================
         elif algorithm == "blowfish":
             if not key:
                 return jsonify({"error": "Passphrase is required for Blowfish"}), 400
+            result = encrypt_blowfish(text, key) if action == "encrypt" else decrypt_blowfish(text, key)
 
-            if action == "encrypt":
-                result = encrypt_blowfish(text, key)
-            elif action == "decrypt":
-                result = decrypt_blowfish(text, key)
-            else:
-                return jsonify({"error": "Invalid action"}), 400
-
-        # =====================
-        # RC4
-        # =====================
         elif algorithm == "rc4":
             if not key:
                 return jsonify({"error": "Passphrase is required for RC4"}), 400
+            result = encrypt_rc4(text, key) if action == "encrypt" else decrypt_rc4(text, key)
 
-            if action == "encrypt":
-                result = encrypt_rc4(text, key)
-            elif action == "decrypt":
-                result = decrypt_rc4(text, key)
-            else:
-                return jsonify({"error": "Invalid action"}), 400
-
-        # =====================
-        # ChaCha20
-        # =====================
         elif algorithm == "chacha20":
             if not key:
                 return jsonify({"error": "Passphrase is required for ChaCha20"}), 400
+            result = encrypt_chacha20(text, key) if action == "encrypt" else decrypt_chacha20(text, key)
 
-            if action == "encrypt":
-                result = encrypt_chacha20(text, key)
-            elif action == "decrypt":
-                result = decrypt_chacha20(text, key)
-            else:
-                return jsonify({"error": "Invalid action"}), 400
-
-        # =====================
-        # RSA
-        # =====================
         elif algorithm == "rsa":
             if action == "generate":
                 result = generate_rsa_keys()
-
             elif action == "encrypt":
                 if not key:
                     return jsonify({"error": "Public key required"}), 400
                 result = encrypt_rsa(text, key)
-
             elif action == "decrypt":
                 if not key:
                     return jsonify({"error": "Private key required"}), 400
                 result = decrypt_rsa(text, key)
-
             else:
                 return jsonify({"error": "Invalid RSA action"}), 400
 
@@ -196,41 +127,61 @@ def crypto_handler():
 
 
 # ======================================================
-# STEGANALYSIS API
+# STEGANALYSIS API (HARDENED VERSION)
 # ======================================================
 @app.route("/api/steganalysis/analyze", methods=["POST"])
 def steganalysis_handler():
+
+    MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB limit
+    ALLOWED_IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "bmp", "tiff", "webp"}
 
     if "file" not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
 
     file = request.files["file"]
 
-    if file.filename == "":
+    if not file or file.filename == "":
         return jsonify({"error": "Empty filename"}), 400
 
-    # Save temporarily
+    filename = secure_filename(file.filename)
+
+    if "." not in filename:
+        return jsonify({"error": "File must have an extension"}), 400
+
+    extension = filename.rsplit(".", 1)[1].lower()
+
+    unique_name = f"{uuid.uuid4().hex}_{filename}"
     temp_dir = tempfile.gettempdir()
-    file_path = os.path.join(temp_dir, file.filename)
-    file.save(file_path)
+    file_path = os.path.join(temp_dir, unique_name)
 
     try:
-        extension = file.filename.split(".")[-1].lower()
-        image_extensions = ["jpg", "jpeg", "png", "bmp", "tiff", "webp"]
+        file.save(file_path)
 
-        if extension in image_extensions:
+        # File size check
+        if os.path.getsize(file_path) > MAX_FILE_SIZE:
+            os.remove(file_path)
+            return jsonify({"error": "File exceeds 20MB limit"}), 400
+
+        # Route to correct analysis pipeline
+        if extension in ALLOWED_IMAGE_EXTENSIONS:
             result = analyze_image(file_path)
         else:
             result = analyze_file(file_path)
 
-        return jsonify(result)
+        return jsonify(result), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({
+            "error": "Steganalysis failed",
+            "details": str(e)
+        }), 500
 
     finally:
         if os.path.exists(file_path):
-            os.remove(file_path)
+            try:
+                os.remove(file_path)
+            except Exception:
+                pass
 
 
 # ======================================================
