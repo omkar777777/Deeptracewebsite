@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "deeptrace-frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "deeptrace-frontend/dist"
+      }
+    },
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "deeptrace-frontend/dist/$1"
+    }
+  ],
+  "env": {
+    "VITE_API_URL": "@vite_api_url"
+  },
+  "buildCommand": "cd deeptrace-frontend && npm run build",
+  "outputDirectory": "deeptrace-frontend/dist"
+}

@@ -188,4 +188,7 @@ def steganalysis_handler():
 # APP ENTRY POINT
 # ======================================================
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Use environment variable for debug mode, default to False for production
+    debug_mode = os.getenv("FLASK_DEBUG", "False").lower() == "true"
+    port = int(os.getenv("PORT", 5000))
+    app.run(debug=debug_mode, port=port)

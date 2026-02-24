@@ -5,8 +5,10 @@ import axios from "axios";
  * Used by cryptoService, stegoService, watermarkService, etc.
  */
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:5000/api";
+
 const api = axios.create({
-  baseURL: "http://127.0.0.1:5000/api",
+  baseURL: BACKEND_URL,
   timeout: 30000,
   headers: {
     "Accept": "application/json"
