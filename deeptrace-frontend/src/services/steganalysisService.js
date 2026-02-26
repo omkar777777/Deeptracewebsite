@@ -15,13 +15,10 @@ export const analyzeFile = async (file) => {
 
   try {
     const response = await api.post(
-      "/steganalysis/analyze",   // ✅ removed extra /api
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      "/api/steganalysis/analyze",
+      formData
+      // ⚠ Do NOT manually set Content-Type.
+      // Axios automatically sets correct multipart boundary.
     );
 
     return response.data;
@@ -29,10 +26,19 @@ export const analyzeFile = async (file) => {
   } catch (error) {
     console.error("Steganalysis API Error:", error);
 
-    if (error.response && error.response.data) {
-      throw new Error(error.response.data.error || "Analysis failed");
+    // If backend returned structured error
+    if (error.response?.data) {
+      const backendError =
+        error.response.data.error ||
+        error.response.data.details ||
+        error.response.data.message;
+
+      if (backendError) {
+        throw new Error(backendError);
+      }
     }
 
+    // Network / CORS / unexpected failure
     throw new Error("Server error during analysis.");
   }
 };

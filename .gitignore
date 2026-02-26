@@ -81,3 +81,4 @@ build_log.txt
 # Package manager lock files (optional - uncomment if you want to ignore)
 # package-lock.json
 # yarn.lock
+.vercel

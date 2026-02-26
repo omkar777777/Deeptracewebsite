@@ -1,9 +1,7 @@
 import numpy as np
 import os
 
-# OpenCV (cv2) is an optional, heavy native dependency that often fails
-# to install in serverless environments. Import lazily and provide
-# a clear error when not available so the function can still start.
+# Optional OpenCV import
 try:
     import cv2
 except Exception:
@@ -20,6 +18,24 @@ from .scoring_engine import aggregate_scores
 
 
 DEBUG = False
+
+
+# ==========================================
+# Utility: Convert NumPy types → Python types
+# ==========================================
+def make_json_safe(obj):
+    """
+    Recursively convert NumPy data types to native Python types
+    so Flask can jsonify safely.
+    """
+    if isinstance(obj, dict):
+        return {k: make_json_safe(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [make_json_safe(v) for v in obj]
+    elif isinstance(obj, np.generic):
+        return obj.item()
+    else:
+        return obj
 
 
 # ==========================================
@@ -46,7 +62,7 @@ def load_and_normalize_image(file_path):
     if len(image.shape) == 3 and image.shape[2] == 4:
         image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
 
-    # Convert BGR → RGB (embedder used PIL RGB)
+    # Convert BGR → RGB
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     return image
@@ -63,39 +79,41 @@ def analyze_image(file_path):
         # -----------------------------
         # Statistical Scores
         # -----------------------------
-        lsb = lsb_score(image)
-        entropy = entropy_score(image)
-        histogram = histogram_score(image)
-        correlation = correlation_score(image)
-        chi_square = chi_square_score(image)
+        lsb = float(lsb_score(image))
+        entropy_val = float(entropy_score(image))
+        histogram = float(histogram_score(image))
+        correlation = float(correlation_score(image))
+        chi_square = float(chi_square_score(image))
 
         if DEBUG:
             print("\nAnalyzing:", file_path)
             print("LSB:", lsb)
-            print("Entropy:", entropy)
+            print("Entropy:", entropy_val)
             print("Histogram:", histogram)
             print("Correlation:", correlation)
             print("Chi-Square:", chi_square)
             print("----------------------------------")
 
+        # Aggregate scores
         result = aggregate_scores(
             lsb,
-            entropy,
+            entropy_val,
             histogram,
             correlation,
             chi_square
         )
 
+        # Ensure total_score exists & is float
+        base_score = float(result.get("total_score", 0))
+
         # -----------------------------
         # Multi-Variant LSB Extraction
         # -----------------------------
         hidden_found = False
-        extracted_text = None
-
-        candidates = extract_lsb_variants(image)
-
         best_score = 0
         best_text = None
+
+        candidates = extract_lsb_variants(image)
 
         for candidate in candidates:
 
@@ -118,16 +136,11 @@ def analyze_image(file_path):
         # -----------------------------
         # Risk Escalation Logic
         # -----------------------------
-        base_score = result["total_score"]
-
         if hidden_found:
-            # Force minimum suspicion level
             base_score = max(base_score, 60)
 
-        result["total_score"] = base_score
-
         # -----------------------------
-        # 4-Tier Risk Classification
+        # Risk Classification
         # -----------------------------
         if base_score <= 25:
             risk = "Clean"
@@ -138,19 +151,26 @@ def analyze_image(file_path):
         else:
             risk = "High Risk"
 
-        result["risk_level"] = risk
-        result["hidden_content_found"] = hidden_found
+        # -----------------------------
+        # Final Result
+        # -----------------------------
+        final_result = {
+            "total_score": float(base_score),
+            "risk_level": str(risk),
+            "hidden_content_found": bool(hidden_found),
+        }
 
         if hidden_found:
-            result["extracted_content"] = best_text
+            final_result["extracted_content"] = str(best_text)
         else:
-            result["message"] = "No recoverable hidden content detected."
+            final_result["message"] = "No recoverable hidden content detected."
 
-        return result
+        # Make everything JSON safe
+        return make_json_safe(final_result)
 
     except Exception as e:
         return {
-            "total_score": 0,
+            "total_score": 0.0,
             "risk_level": "Error",
             "hidden_content_found": False,
             "message": str(e),
