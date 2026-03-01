@@ -61,10 +61,22 @@ def crypto_handler():
 
     try:
 
+        # =====================
+        # Caesar Cipher
+        # =====================
         if algorithm == "caesar":
             shift = int(key)
-            result = encrypt_caesar(text, shift) if action == "encrypt" else decrypt_caesar(text, shift)
 
+            if action == "encrypt":
+                result = encrypt_caesar(text, shift)
+            elif action == "decrypt":
+                result = decrypt_caesar(text, shift)
+            else:
+                return jsonify({"error": "Invalid action"}), 400
+
+        # =====================
+        # AES
+        # =====================
         elif algorithm == "aes":
             result = encrypt_aes(text, key) if action == "encrypt" else decrypt_aes(text, key)
 
@@ -86,10 +98,13 @@ def crypto_handler():
         elif algorithm == "rsa":
             if action == "generate":
                 result = generate_rsa_keys()
+
             elif action == "encrypt":
                 result = encrypt_rsa(text, key)
+
             elif action == "decrypt":
                 result = decrypt_rsa(text, key)
+
             else:
                 return jsonify({"error": "Invalid RSA action"}), 400
 
@@ -111,6 +126,7 @@ def crypto_handler():
 
 # ======================================================
 # STEGANALYSIS API
+# STEGANALYSIS API
 # ======================================================
 @app.route("/api/steganalysis/analyze", methods=["POST"])
 def steganalysis_handler():
@@ -123,17 +139,10 @@ def steganalysis_handler():
 
     file = request.files["file"]
 
-    if not file or file.filename == "":
+    if file.filename == "":
         return jsonify({"error": "Empty filename"}), 400
 
-    filename = secure_filename(file.filename)
-
-    if "." not in filename:
-        return jsonify({"error": "File must have an extension"}), 400
-
-    extension = filename.rsplit(".", 1)[1].lower()
-
-    unique_name = f"{uuid.uuid4().hex}_{filename}"
+    # Save temporarily
     temp_dir = tempfile.gettempdir()
     file_path = os.path.join(temp_dir, unique_name)
 
@@ -149,20 +158,14 @@ def steganalysis_handler():
         else:
             result = analyze_file(file_path)
 
-        return jsonify(result), 200
+        return jsonify(result)
 
     except Exception as e:
-        return jsonify({
-            "error": "Steganalysis failed",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": str(e)}), 500
 
     finally:
         if os.path.exists(file_path):
-            try:
-                os.remove(file_path)
-            except Exception:
-                pass
+            os.remove(file_path)
 
 
 # ======================================================
