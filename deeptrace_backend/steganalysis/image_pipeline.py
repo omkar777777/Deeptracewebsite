@@ -60,26 +60,30 @@ def analyze_image(file_path):
     )
 
     # --------------------------------------
-    # Conditional LSB Extraction Attempt
+    # LSB Extraction Attempt (ALWAYS RUN)
     # --------------------------------------
 
     hidden_found = False
     extracted_text = None
+    extraction_type = None
 
-    if result["risk_level"] != "Clean":
-
-        raw_payload = extract_lsb_payload(image)
-
-        is_valid, decoded = validate_content(raw_payload)
-
-        if is_valid:
+    raw_payloads = extract_lsb_payload(image)
+    
+    for raw_payload in raw_payloads:
+        content_type, decoded = validate_content(raw_payload)
+        if content_type in ("plaintext", "cipher text"):
             hidden_found = True
             extracted_text = decoded
+            extraction_type = content_type
+            break
 
     result["hidden_content_found"] = hidden_found
 
     if hidden_found:
         result["extracted_content"] = extracted_text
+        result["extraction_type"] = extraction_type
+        result["risk_level"] = "High Risk"
+        result["message"] = f"Hidden content ({extraction_type}) successfully extracted."
     else:
         result["message"] = "No valid hidden content found."
 

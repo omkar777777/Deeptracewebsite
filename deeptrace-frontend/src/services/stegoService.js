@@ -17,7 +17,7 @@ export const embedImageStego = (
     formData.append("password", password);
   }
 
-  return api.post("/stego/image/embed", formData, {
+  return api.post("/api/stego/image/embed", formData, {
     responseType: "arraybuffer"
   });
 };
@@ -36,5 +36,5 @@ export const extractImageStego = (
     formData.append("password", password);
   }
 
-  return api.post("/stego/image/extract", formData);
+  return api.post("/api/stego/image/extract", formData);
 };

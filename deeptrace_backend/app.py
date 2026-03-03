@@ -142,6 +142,13 @@ def steganalysis_handler():
     if file.filename == "":
         return jsonify({"error": "Empty filename"}), 400
 
+    filename = secure_filename(file.filename)
+    if "." not in filename:
+        return jsonify({"error": "File must have a valid extension"}), 400
+
+    extension = filename.rsplit(".", 1)[1].lower()
+    unique_name = f"{uuid.uuid4().hex}_{filename}"
+
     # Save temporarily
     temp_dir = tempfile.gettempdir()
     file_path = os.path.join(temp_dir, unique_name)

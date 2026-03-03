@@ -95,12 +95,15 @@ function Analysis() {
                 }}
               >
                 <h3 style={{ marginBottom: "10px" }}>
-                  Extracted Content:
+                  Extracted Content{" "}
+                  {result.extraction_type && result.extraction_type !== "plaintext"
+                    ? `(${result.extraction_type})`
+                    : ""}
+                  :
                 </h3>
-
-                <pre style={{ whiteSpace: "pre-wrap" }}>
+                <div className="extracted-text-box">
                   {result.extracted_content}
-                </pre>
+                </div>
 
                 <button
                   className="analyze-btn"

@@ -111,4 +111,6 @@ def analyze_file(file_path):
         0   # chi_square placeholder
     )
 
+    # File pipeline does not currently extract content directly via validate_content in the snippet seen earlier, 
+    # but we will double check its logic.
     return result
