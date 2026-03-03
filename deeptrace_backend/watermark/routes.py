@@ -25,10 +25,11 @@ def embed():
         data = request.json
         image_data = data.get("image")
         watermark_type = data.get("type")
-        secret_key = data.get("secretKey")
+        secret_key = data.get("secretKey", "")
         text = data.get("text")
+        opacity = float(data.get("opacity", 0.5))
         
-        if not all([image_data, watermark_type, secret_key, text]):
+        if not image_data or not watermark_type or not text:
             return jsonify({"error": "Missing required fields"}), 400
             
         image = base64_to_image(image_data)
@@ -37,6 +38,12 @@ def embed():
             result_image = embed_dct(image, secret_key, text)
         elif watermark_type == "invisible_dwt":
             result_image = embed_dwt(image, secret_key, text)
+        elif watermark_type == "visible":
+            from .visible import embed_visible
+            result_image = embed_visible(image, text, opacity=opacity)
+        elif watermark_type == "invisible_lsb":
+            from .lsb import embed_lsb
+            result_image = embed_lsb(image, text)
         else:
             return jsonify({"error": "Invalid watermark type"}), 400
             
@@ -54,9 +61,9 @@ def extract():
         data = request.json
         image_data = data.get("image")
         watermark_type = data.get("type")
-        secret_key = data.get("secretKey")
+        secret_key = data.get("secretKey", "")
         
-        if not all([image_data, watermark_type, secret_key]):
+        if not image_data or not watermark_type:
             return jsonify({"error": "Missing required fields"}), 400
             
         image = base64_to_image(image_data)
@@ -65,6 +72,11 @@ def extract():
             extracted_text = extract_dct(image, secret_key)
         elif watermark_type == "invisible_dwt":
             extracted_text = extract_dwt(image, secret_key)
+        elif watermark_type == "invisible_lsb":
+            from .lsb import extract_lsb
+            extracted_text = extract_lsb(image)
+        elif watermark_type == "visible":
+            return jsonify({"error": "Extracting from visible watermark is not supported"}), 400
         else:
             return jsonify({"error": "Invalid watermark type"}), 400
             

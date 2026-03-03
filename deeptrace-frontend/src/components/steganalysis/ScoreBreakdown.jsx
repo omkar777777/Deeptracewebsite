@@ -4,11 +4,10 @@ function ScoreBreakdown({ details }) {
   if (!details) return null;
 
   const scoreItems = [
-    { label: "LSB Analysis", value: details.lsb_score },
-    { label: "Entropy Analysis", value: details.entropy_score },
-    { label: "Histogram Analysis", value: details.histogram_score },
-    { label: "Correlation Analysis", value: details.correlation_score },
-    { label: "Chi-Square Analysis", value: details.chi_square_score },
+    { label: "LSB Anomaly", value: `${details.lsb_anomaly_score ?? 0}%` },
+    { label: "Entropy Deviation", value: `${details.entropy_deviation_score ?? 0}%` },
+    { label: "Extraction Success", value: details.extraction_success ? "Yes" : "No" },
+    { label: "Content Validity", value: details.content_validity ? "Valid" : "None" }
   ];
 
   return (
@@ -21,7 +20,7 @@ function ScoreBreakdown({ details }) {
             {item.label}
           </span>
           <span className="score-value">
-            {item.value ?? 0} / 25
+            {item.value}
           </span>
         </div>
       ))}

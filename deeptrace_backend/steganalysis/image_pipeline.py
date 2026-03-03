@@ -44,45 +44,49 @@ def analyze_image(file_path):
 
     image = load_and_normalize_image(file_path)
 
-    # Statistical Scores
-    lsb = lsb_score(image)
-    entropy = entropy_score(image)
-    histogram = histogram_score(image)
-    correlation = correlation_score(image)
-    chi_square = chi_square_score(image)
-
-    result = aggregate_scores(
-        lsb,
-        entropy,
-        histogram,
-        correlation,
-        chi_square
-    )
+    # Statistical Scores (0-100)
+    lsb_anomaly = lsb_score(image)
+    entropy_dev = entropy_score(image)
 
     # --------------------------------------
     # LSB Extraction Attempt (ALWAYS RUN)
     # --------------------------------------
 
-    hidden_found = False
+    extraction_success = False
+    valid_content = False
     extracted_text = None
     extraction_type = None
 
-    raw_payloads = extract_lsb_payload(image)
+    payload_results = extract_lsb_payload(image)
     
-    for raw_payload in raw_payloads:
-        content_type, decoded = validate_content(raw_payload)
+    for p in payload_results:
+        byte_data = p["data"]
+        delimiter_detected = p["delimiter"]
+        
+        if delimiter_detected:
+            extraction_success = True
+            
+        content_type, decoded = validate_content(byte_data)
+        
         if content_type in ("plaintext", "cipher text"):
-            hidden_found = True
+            extraction_success = True
+            valid_content = True
             extracted_text = decoded
             extraction_type = content_type
             break
 
-    result["hidden_content_found"] = hidden_found
+    result = aggregate_scores(
+        lsb_anomaly=lsb_anomaly,
+        entropy_deviation=entropy_dev,
+        extraction_success=extraction_success,
+        content_validity=valid_content
+    )
 
-    if hidden_found:
+    result["hidden_content_found"] = valid_content
+
+    if valid_content:
         result["extracted_content"] = extracted_text
         result["extraction_type"] = extraction_type
-        result["risk_level"] = "High Risk"
         result["message"] = f"Hidden content ({extraction_type}) successfully extracted."
     else:
         result["message"] = "No valid hidden content found."

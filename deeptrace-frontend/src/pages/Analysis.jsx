@@ -77,10 +77,12 @@ function Analysis() {
 
       {result && (
         <>
-          <RiskMeter score={result.total_score} />
+          <RiskMeter score={result.risk_percentage} />
 
           <div style={{ textAlign: "center", marginTop: "15px" }}>
-            <strong>Risk Level:</strong> {result.risk_level}
+            <strong>Risk Classification:</strong> {result.risk_classification}
+            <br />
+            <strong>Confidence Level:</strong> {result.confidence_level}
           </div>
 
           {/* Extraction Result Section */}

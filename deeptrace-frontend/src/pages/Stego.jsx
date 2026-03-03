@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { embedImageStego, extractImageStego } from "../services/stegoService";
+import { processCrypto } from "../services/cryptoService";
 import "../styles/steganography.css";
 
 function Stego() {
@@ -10,6 +11,12 @@ function Stego() {
 
   const [embedPassword, setEmbedPassword] = useState("");
   const [extractPassword, setExtractPassword] = useState("");
+
+  const [embedDualLayer, setEmbedDualLayer] = useState(false);
+  const [embedCryptoAlgo, setEmbedCryptoAlgo] = useState("aes");
+
+  const [extractDualLayer, setExtractDualLayer] = useState(false);
+  const [extractCryptoAlgo, setExtractCryptoAlgo] = useState("aes");
 
   const [coverImage, setCoverImage] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
@@ -55,11 +62,20 @@ function Stego() {
     try {
       setLoading(true);
 
+      let finalSecret = secret;
+
+      if (embedDualLayer) {
+        if (!embedPassword) throw new Error("Encryption key required for Dual-Layer Security.");
+        const cRes = await processCrypto(embedCryptoAlgo, "encrypt", secret, embedPassword);
+        if (!cRes.data.result) throw new Error("Encryption failed.");
+        finalSecret = cRes.data.result;
+      }
+
       const res = await embedImageStego(
         coverImage,
-        secret,
+        finalSecret,
         embedAlgorithm,
-        embedPassword
+        embedAlgorithm === "lsb-keyed" ? embedPassword : ""
       );
 
       const blob = new Blob([res.data], { type: "image/png" });
@@ -77,6 +93,7 @@ function Stego() {
       setResult("Stego image generated successfully.");
     } catch (err) {
       setError(
+        err.message ||
         err?.response?.data?.error ||
         "Embedding failed. Check image size or message length."
       );
@@ -106,12 +123,25 @@ function Stego() {
       const res = await extractImageStego(
         stegoImage,
         extractAlgorithm,
-        extractPassword
+        extractAlgorithm === "lsb-keyed" ? extractPassword : ""
       );
 
-      setResult(`Extracted message: ${res.data.data.message}`);
+      let finalMessage = res.data.data.message;
+
+      if (extractDualLayer) {
+        if (!extractPassword) throw new Error("Decryption key required for Dual-Layer Security.");
+
+        let cleanText = finalMessage.split('\x00')[0].trim();
+        const cRes = await processCrypto(extractCryptoAlgo, "decrypt", cleanText, extractPassword);
+
+        if (!cRes.data.result) throw new Error("Decryption failed or incorrect password.");
+        finalMessage = cRes.data.result;
+      }
+
+      setResult(`Extracted message: ${finalMessage}`);
     } catch (err) {
       setError(
+        err.message ||
         err?.response?.data?.error ||
         "Extraction failed. Wrong password or invalid stego image."
       );
@@ -150,15 +180,33 @@ function Stego() {
             </select>
           </div>
 
-          {embedAlgorithm === "lsb-keyed" && (
+          {(embedAlgorithm === "lsb-keyed" || embedDualLayer) && (
             <div className="form-group">
-              <label>Encryption Password</label>
+              <label>{embedDualLayer ? "Encryption Key" : "Encryption Password"}</label>
               <input
                 type="password"
-                placeholder="Enter encryption password"
+                placeholder="Enter password/key"
                 value={embedPassword}
                 onChange={(e) => setEmbedPassword(e.target.value)}
               />
+            </div>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px', marginTop: '10px' }}>
+            <input type="checkbox" id="embedDual" checked={embedDualLayer} onChange={(e) => setEmbedDualLayer(e.target.checked)} style={{ marginRight: '8px', cursor: 'pointer' }} />
+            <label htmlFor="embedDual" style={{ margin: 0, fontWeight: 'bold' }}>Enable Dual-Layer Security (Pre-Encrypt)</label>
+          </div>
+
+          {embedDualLayer && (
+            <div className="form-group">
+              <label>Encryption Algorithm</label>
+              <select value={embedCryptoAlgo} onChange={(e) => setEmbedCryptoAlgo(e.target.value)}>
+                <option value="aes">AES-256</option>
+                <option value="3des">Triple DES</option>
+                <option value="blowfish">Blowfish</option>
+                <option value="chacha20">ChaCha20</option>
+                <option value="caesar">Caesar Cipher</option>
+              </select>
             </div>
           )}
 
@@ -219,15 +267,33 @@ function Stego() {
             </select>
           </div>
 
-          {extractAlgorithm === "lsb-keyed" && (
+          {(extractAlgorithm === "lsb-keyed" || extractDualLayer) && (
             <div className="form-group">
-              <label>Decryption Password</label>
+              <label>{extractDualLayer ? "Decryption Key" : "Decryption Password"}</label>
               <input
                 type="password"
-                placeholder="Enter decryption password"
+                placeholder="Enter password/key"
                 value={extractPassword}
                 onChange={(e) => setExtractPassword(e.target.value)}
               />
+            </div>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px', marginTop: '10px' }}>
+            <input type="checkbox" id="extractDual" checked={extractDualLayer} onChange={(e) => setExtractDualLayer(e.target.checked)} style={{ marginRight: '8px', cursor: 'pointer' }} />
+            <label htmlFor="extractDual" style={{ margin: 0, fontWeight: 'bold' }}>Enable Dual-Layer Security (Decrypt after Extract)</label>
+          </div>
+
+          {extractDualLayer && (
+            <div className="form-group">
+              <label>Decryption Algorithm</label>
+              <select value={extractCryptoAlgo} onChange={(e) => setExtractCryptoAlgo(e.target.value)}>
+                <option value="aes">AES-256</option>
+                <option value="3des">Triple DES</option>
+                <option value="blowfish">Blowfish</option>
+                <option value="chacha20">ChaCha20</option>
+                <option value="caesar">Caesar Cipher</option>
+              </select>
             </div>
           )}
 

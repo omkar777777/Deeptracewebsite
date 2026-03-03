@@ -1,4 +1,6 @@
-from .utils import text_to_bits, bits_to_text, set_lsb, get_lsb
+import numpy as np
+from PIL import Image
+from .utils import text_to_bits, bits_to_text
 from .capacity import image_capacity
 
 END_MARKER = "1111111111111110"  # 16-bit delimiter
@@ -6,7 +8,7 @@ END_MARKER = "1111111111111110"  # 16-bit delimiter
 
 def embed_lsb(image, secret):
     """
-    Embed secret string inside image using 1-bit LSB.
+    Embed secret string inside image using 1-bit LSB via NumPy.
     Returns modified image.
     """
 
@@ -19,55 +21,42 @@ def embed_lsb(image, secret):
     if len(secret_bits) > capacity * 8:
         raise ValueError("Secret message too large for this image")
 
-    pixels = image.load()
-    bit_index = 0
+    # Map the secret bits to an integer array
+    bits_array = np.fromiter((int(b) for b in secret_bits), dtype=np.uint8)
 
-    for y in range(image.height):
-        for x in range(image.width):
+    # Convert image to numpy array and flatten it
+    img_array = np.array(image, dtype=np.uint8)
+    flat_img = img_array.flatten()
 
-            if bit_index >= len(secret_bits):
-                return image
+    # Apply NumPy vectorized bitwise operation
+    flat_img[:len(bits_array)] = (flat_img[:len(bits_array)] & ~np.uint8(1)) | bits_array
 
-            r, g, b = pixels[x, y]
+    # Reshape back to original shape and return Image
+    img_array = flat_img.reshape(img_array.shape)
 
-            if bit_index < len(secret_bits):
-                r = set_lsb(r, secret_bits[bit_index])
-                bit_index += 1
-
-            if bit_index < len(secret_bits):
-                g = set_lsb(g, secret_bits[bit_index])
-                bit_index += 1
-
-            if bit_index < len(secret_bits):
-                b = set_lsb(b, secret_bits[bit_index])
-                bit_index += 1
-
-            pixels[x, y] = (r, g, b)
-
-    return image
+    return Image.fromarray(img_array, mode="RGB")
 
 
 def extract_lsb(image):
     """
-    Extract hidden message from image.
+    Extract hidden message from image using NumPy arrays.
     """
 
     if image.mode != "RGB":
         raise ValueError("Image must be RGB")
 
-    pixels = image.load()
-    bits = ""
+    # Convert image to numpy flat array
+    img_array = np.array(image, dtype=np.uint8)
+    flat_img = img_array.flatten()
 
-    for y in range(image.height):
-        for x in range(image.width):
-            r, g, b = pixels[x, y]
-
-            bits += str(get_lsb(r))
-            bits += str(get_lsb(g))
-            bits += str(get_lsb(b))
-
-            if END_MARKER in bits:
-                bits = bits.split(END_MARKER)[0]
-                return bits_to_text(bits)
+    # Extract all LSBs cleanly
+    lsb_bits = flat_img & 1
+    
+    # Fast delimiter slicing
+    bit_str = ''.join(lsb_bits.astype(str))
+    
+    if END_MARKER in bit_str:
+        clean_bits = bit_str.split(END_MARKER)[0]
+        return bits_to_text(clean_bits)
 
     return ""

@@ -18,7 +18,7 @@ def bits_to_bytes(bits, max_bytes):
             chunk = clean_bits[i:i+8]
             if len(chunk) == 8:
                 byte_array.append(int(chunk, 2))
-        payloads.append(bytes(byte_array))
+        payloads.append({"data": bytes(byte_array), "delimiter": True})
 
     # Payload 2: Raw (Standard max_bytes extraction)
     # Reconstruct from bit_str to keep it efficient instead of looping over bits again
@@ -27,7 +27,7 @@ def bits_to_bytes(bits, max_bytes):
         chunk = bit_str[i:i+8]
         if len(chunk) == 8:
             raw_array.append(int(chunk, 2))
-    payloads.append(bytes(raw_array))
+    payloads.append({"data": bytes(raw_array), "delimiter": False})
     
     return payloads
 
