@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { processCrypto } from "../services/cryptoService";
 import "../styles/crypto.css";
 
 const CAESAR_SHIFT = 3;
@@ -66,43 +67,34 @@ function Crypto() {
         if (action !== "generate") payload.key = key;
       }
 
-      const response = await fetch("http://127.0.0.1:5000/api/crypto", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const data = await processCrypto(algorithm, action, text, payload.key);
+      const resultData = data.data;
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || "Something went wrong");
-      } else {
-        if (algorithm === "rsa" && action === "generate") {
-          const content = `RSA KEY PAIR (2048-bit)
+      if (algorithm === "rsa" && action === "generate") {
+        const content = `RSA KEY PAIR (2048-bit)
 
 PUBLIC KEY:
-${data.result.public_key}
+${resultData.result.public_key}
 
 PRIVATE KEY:
-${data.result.private_key}
+${resultData.result.private_key}
 `;
 
-          const blob = new Blob([content], { type: "text/plain" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "rsa_keys.txt";
-          a.click();
-          URL.revokeObjectURL(url);
+        const blob = new Blob([content], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "rsa_keys.txt";
+        a.click();
+        URL.revokeObjectURL(url);
 
-          setKey(data.result.public_key);
-          setResult("RSA keys generated and downloaded successfully.");
-        } else {
-          setResult(data.result);
-        }
+        setKey(resultData.result.public_key);
+        setResult("RSA keys generated and downloaded successfully.");
+      } else {
+        setResult(resultData.result);
       }
-    } catch {
-      setError("Cannot connect to backend");
+    } catch (err) {
+      setError(err?.response?.data?.error || "Cannot connect to backend");
     } finally {
       setLoading(false);
     }

@@ -25,7 +25,7 @@ export const embedDWT = async (imageFile, options = {}) => {
                 });
 
                 // Send to Backend
-                const response = await api.post("/watermark/embed", {
+                const response = await api.post("watermark/embed", {
                     image: dataUrl,
                     type: "invisible_dwt",
                     secretKey: secretKey,
@@ -60,7 +60,7 @@ export const extractDWT = async (imageFile, options = {}) => {
                     return;
                 }
 
-                const response = await api.post("/watermark/extract", {
+                const response = await api.post("watermark/extract", {
                     image: dataUrl,
                     type: "invisible_dwt",
                     secretKey: secretKey

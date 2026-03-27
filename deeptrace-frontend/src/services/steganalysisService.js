@@ -15,7 +15,7 @@ export const analyzeFile = async (file) => {
 
   try {
     const response = await api.post(
-      "/api/steganalysis/analyze",
+      "steganalysis/analyze",
       formData
       // ⚠ Do NOT manually set Content-Type.
       // Axios automatically sets correct multipart boundary.
