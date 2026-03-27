@@ -8,12 +8,13 @@ except Exception:
 
 from .lsb_analysis import lsb_score
 from .entropy_analysis import entropy_score
-from .histogram_analysis import histogram_score
-from .correlation_analysis import correlation_score
-from .chi_square_analysis import chi_square_score
 from .lsb_extraction import extract_lsb_payload
 from .content_validator import validate_content
-from .scoring_engine import aggregate_scores
+from .scoring_engine import aggregate_image_scores
+from .rs_analysis import rs_score
+from .spa_analysis import spa_score
+from .srm_analysis import srm_score
+from .cnn_analysis import cnn_score
 
 
 # ==========================================
@@ -47,6 +48,12 @@ def analyze_image(file_path):
     # Statistical Scores (0-100)
     lsb_anomaly = lsb_score(image)
     entropy_dev = entropy_score(image)
+    rs_anomaly = rs_score(image)
+    spa_anomaly = spa_score(image)
+
+    # Advanced Detection Layers (0-100 placeholder/ML scores)
+    srm_anomaly = srm_score(image)
+    cnn_anomaly = cnn_score(image)
 
     # --------------------------------------
     # LSB Extraction Attempt (ALWAYS RUN)
@@ -75,9 +82,13 @@ def analyze_image(file_path):
             extraction_type = content_type
             break
 
-    result = aggregate_scores(
+    result = aggregate_image_scores(
         lsb_anomaly=lsb_anomaly,
         entropy_deviation=entropy_dev,
+        rs_anomaly=rs_anomaly,
+        spa_anomaly=spa_anomaly,
+        srm_anomaly=srm_anomaly,
+        cnn_anomaly=cnn_anomaly,
         extraction_success=extraction_success,
         content_validity=valid_content
     )

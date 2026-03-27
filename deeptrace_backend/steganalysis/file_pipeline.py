@@ -2,7 +2,7 @@ import os
 import numpy as np
 from scipy.stats import entropy
 
-from .scoring_engine import aggregate_scores
+from .scoring_engine import aggregate_file_scores
 
 
 # ==========================================
@@ -103,7 +103,7 @@ def analyze_file(file_path):
     header_score_val = header_score(data)
 
     # IMPORTANT: Pass 0 for chi_square (image-only metric)
-    result = aggregate_scores(
+    result = aggregate_file_scores(
         bit_score_val,
         entropy_score_val,
         size_score_val,
