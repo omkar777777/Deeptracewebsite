@@ -1,7 +1,12 @@
 import sys
 import os
 
-# Add the deeptrace_backend directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'deeptrace_backend'))
+# Add the root directory so we can import 'deeptrace_backend'
+# And add 'deeptrace_backend' itself for inner imports like 'crypto.aes'
+root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+backend = os.path.join(root, 'deeptrace_backend')
+
+if root not in sys.path: sys.path.insert(0, root)
+if backend not in sys.path: sys.path.insert(0, backend)
 
 from deeptrace_backend.app import app

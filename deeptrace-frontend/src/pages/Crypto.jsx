@@ -71,13 +71,17 @@ function Crypto() {
       const resultData = data.data;
 
       if (algorithm === "rsa" && action === "generate") {
+        if (!resultData?.result) {
+          throw new Error("Failed to generate RSA keys: Missing result from backend");
+        }
+        const { public_key, private_key } = resultData.result;
         const content = `RSA KEY PAIR (2048-bit)
 
 PUBLIC KEY:
-${resultData.result.public_key}
+${public_key || "N/A"}
 
 PRIVATE KEY:
-${resultData.result.private_key}
+${private_key || "N/A"}
 `;
 
         const blob = new Blob([content], { type: "text/plain" });
@@ -88,13 +92,15 @@ ${resultData.result.private_key}
         a.click();
         URL.revokeObjectURL(url);
 
-        setKey(resultData.result.public_key);
+        if (public_key) setKey(public_key);
         setResult("RSA keys generated and downloaded successfully.");
       } else {
-        setResult(resultData.result);
+        const finalResult = resultData?.result;
+        setResult(typeof finalResult === 'string' ? finalResult : JSON.stringify(finalResult));
       }
     } catch (err) {
-      setError(err?.response?.data?.error || "Cannot connect to backend");
+      const msg = err?.response?.data?.error || err?.response?.data?.message || err.message || "Cannot connect to backend";
+      setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
     } finally {
       setLoading(false);
     }
