@@ -99,7 +99,8 @@ Once deployed, update the environment variable:
 ├── api/
 │   └── index.py            # Vercel serverless entry point
 │
-├── vercel.json             # Vercel configuration
+├── vercel.json             # Vercel API and Routing configuration
+├── package.json            # Root build script for Vercel deployment
 ├── .vercelignore           # Files to ignore during deployment
 └── README.md
 ```
@@ -107,11 +108,10 @@ Once deployed, update the environment variable:
 ## Key Configuration Files
 
 ### `vercel.json`
-Defines the build and routing configuration for Vercel:
-- Builds the frontend with Vite
-- Runs Python backend as serverless functions
-- Routes `/api/*` requests to the backend
-- Routes all other requests to the frontend
+Defines the routing configuration for Vercel:
+- Uses `public` as the output directory for static frontend assets
+- Routes `/api/*` requests to the Serverless Python backend
+- Handled filesystem first, then fallbacks `/(.*)` to `index.html` for React SPA routing
 
 ### `.vercelignore`
 Specifies files and directories to exclude from deployment:
