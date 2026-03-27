@@ -1,8 +1,11 @@
 {
   "name": "deeptrace-monorepo",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "cd deeptrace-frontend && npm run dev",
-    "build": "cd deeptrace-frontend && npm install && npm run build && cd .. && rm -rf public && cp -r deeptrace-frontend/dist public"
+    "build": "cd deeptrace-frontend && npm install && npm run build && cd .. && mkdir -p public && cp -af deeptrace-frontend/dist/. public/"
   }
 }
