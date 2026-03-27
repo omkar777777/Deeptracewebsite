@@ -2,6 +2,7 @@
   "name": "deeptrace-monorepo",
   "private": true,
   "scripts": {
+    "dev": "cd deeptrace-frontend && npm run dev",
     "build": "cd deeptrace-frontend && npm install && npm run build && cd .. && rm -rf public && cp -r deeptrace-frontend/dist public"
   }
 }

@@ -6,9 +6,10 @@ import axios from "axios";
  */
 
 const BACKEND_URL =
-  import.meta.env.MODE === "development"
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === "development"
     ? "http://127.0.0.1:5000"
-    : "/api";  // In production, Vercel rewrite handles this
+    : "/api");
 
 const api = axios.create({
   baseURL: BACKEND_URL,
