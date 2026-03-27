@@ -167,6 +167,14 @@ def steganalysis_handler():
 
         return jsonify(result)
 
+    except RuntimeError as e:
+        # Handle missing OpenCV gracefully
+        return jsonify({
+            "error": "Service Unavailable", 
+            "details": str(e),
+            "info": "This feature requires heavy libraries (OpenCV) not supported on Vercel Serverless. Please deploy to a full VPS if required."
+        }), 503
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

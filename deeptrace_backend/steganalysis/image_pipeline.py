@@ -21,6 +21,9 @@ from .cnn_analysis import cnn_score
 # Normalize Image to RGB
 # ==========================================
 def load_and_normalize_image(file_path):
+    if cv2 is None:
+        raise RuntimeError("OpenCV (cv2) is not available in this environment. Steganalysis is disabled on Vercel Serverless.")
+
     image = cv2.imread(file_path, cv2.IMREAD_UNCHANGED)
 
     if image is None:
